@@ -34,6 +34,27 @@ class Config(object):
 
 config = Config().config
 
-print(config)
+class UserData(object):
+    
+    def __init__(self):
+        self.userdata = self._read_users_data()
 
+    def _read_users_data(self):
+        userdata = []
+        with open(args.d) as f:
+            for line in f.readlines():
+                key, value = line.split(',')
+                user = (int(key), float(value.strip()))
+                userdata.append(user)
+        return userdata
 
+userdata = UserData().userdata
+
+class IncomeTaxCalculator(object):
+
+    def calc_for_all_userdata(self):
+        for u in userdata:
+            money = u[1]
+            
+
+c = IncomeTaxCalculator().calc_for_all_userdata()
