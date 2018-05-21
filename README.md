@@ -6,3 +6,7 @@ list(csv.reader(f))
 
 写入
 csv.writer(f).writerow([...]) 一个list
+
+#保留2位小数
+
+format(12, '.2f')
