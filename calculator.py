@@ -34,27 +34,48 @@ class Config(object):
 
 config = Config().config
 
+
 class UserData(object):
     
     def __init__(self):
         self.userdata = self._read_users_data()
 
     def _read_users_data(self):
-        userdata = []
         with open(args.d) as f:
-            for line in f.readlines():
-                key, value = line.split(',')
-                user = (int(key), float(value.strip()))
-                userdata.append(user)
-        return userdata
+            data = list(csv.reader(f))
+        return data
 
 userdata = UserData().userdata
 
-class IncomeTaxCalculator(object):
 
-    def calc_for_all_userdata(self):
-        for u in userdata:
-            money = u[1]
-            
+def get_all(id, salary):
+    salary = int(salary)
+    shebao = salary * config['s']
+    if salary < config['JiShuL']:
+        shebao = config['JiShuL'] * config['s']
+    if salary > config['JiShuH']:
+        shebao = config['JiShuH'] * config['s']
+    money = salary - shebao - 3500
+    if money <= 0:
+        m = 0
+    elif money <= 1500:
+        m = money * 0.03
+    elif money <= 4500:
+        m = money * 0.1 - 105
+    elif money <= 9000:
+        m = money * 0.2 - 555
+    elif money <= 35000:
+        m = money * 0.25 - 1005
+    elif money <= 55000:
+        m = money * 0.3 - 2755
+    elif money <= 80000:
+    	m = money * 0.35 - 5505
+    else:
+    	m = money * 0.45 - 13505
 
-c = IncomeTaxCalculator().calc_for_all_userdata()
+    return [id, salary, format(shebao, '.2f'),
+        format(m, '.2f'), format(salary-shebao-m, '.2f')]
+
+with open(args.o, 'w') as f:
+    for a, b in userdata:
+        csv.writer(f).writerow(get_all(a, b))
